@@ -1,7 +1,16 @@
 import sys
 import subprocess
-import argparse
 
+def config(args):
+    """Main config function"""
+    if args.dns:
+        configure_dns(args.dns)
+    elif args.change_hostname:
+        change_hostname()
+    elif args.change_shell:
+        change_shell()
+    else:
+        print("No configuration options specified. Use --dns, --change-hostname, or --change-shell.")
 
 def configure_dns(provider):
     """Configure DNS in systemd-resolved's resolved.conf"""
@@ -35,7 +44,6 @@ DNSStubListener=yes
         # Write to /etc/systemd/resolved.conf
         with open('/etc/systemd/resolved.conf', 'w') as f:
             f.write(resolved_content)
-        
         # Restart systemd-resolved service
         subprocess.run(['sudo', 'systemctl', 'restart', 'systemd-resolved'], check=True)
         print(f"DNS configured to {provider} successfully!")
@@ -44,17 +52,78 @@ DNSStubListener=yes
     except subprocess.CalledProcessError as e:
         print(f"Failed to restart systemd-resolved: {e}")
         return False
+        sys.exit(1)
     except PermissionError:
         print("Permission denied. Please run with sudo.")
         return False
+        sys.exit(1)
     except Exception as e:
         print(f"An error occurred: {e}")
         return False
+        sys.exit(1)
 
+def change_hostname():
+    print("Enter your desired hostname:")
+    hostname = input("Hostname: ")
+    
+    # Validate hostname (basic validation)
+    if not hostname or len(hostname) == 0:
+        print("Hostname cannot be empty.")
+        return False
+    
+    try:
+        # Write the new hostname to /etc/hostname
+        with open('/etc/hostname', 'w') as f:
+            f.write(hostname + '\n')
+        
+        # Also update the current hostname using hostnamectl
+        subprocess.run(['sudo', 'hostnamectl', 'set-hostname', hostname], check=True)
+        
+        print(f"Hostname changed to {hostname} successfully!")
+        return True
+        
+    except subprocess.CalledProcessError as e:
+        print(f"Failed to set hostname: {e}")
+        return False
+        sys.exit(1)
+    except PermissionError:
+        print("Permission denied. Please run with sudo.")
+        return False
+        sys.exit(1)
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return False
+        sys.exit(1)
+    
+def change_shell():
+    print("Enter your desired shell (e.g., /bin/bash, /bin/zsh):")
+    shell = input("Shell: ")
+    
+    # Validate that the shell exists
+    try:
+        subprocess.run(['which', shell], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    except subprocess.CalledProcessError:
+        print(f"Shell {shell} not found on this system.")
+        return False
+    
+    try:
+        # Change the user's shell using chsh
+        subprocess.run(['chsh', '-s', shell], check=True)
+        
+        print(f"Shell changed to {shell} successfully!")
+        print("You may need to log out and back in for the changes to take effect.")
+        return True
+        
+    except subprocess.CalledProcessError as e:
+        print(f"Failed to change shell: {e}")
+        return False
+        sys.exit(1)
+    except PermissionError:
+        print("Permission denied. Please run with sudo.")
+        return False
+        sys.exit(1)
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return False
+        sys.exit(1)
 
-def config(args):
-    """Main config function"""
-    if args.dns:
-        configure_dns(args.dns)
-    else:
-        print("No configuration options specified. Use --dns to configure DNS.")
