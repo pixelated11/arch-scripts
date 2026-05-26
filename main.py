@@ -1,7 +1,13 @@
+#!/usr/bin/env python3
+import sys
+import os
+# Add the arch_scripts module to the path
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', 'lib/python3/site-packages'))
+
 import subprocess
 import argparse
-from update import update
-from config import config
+from arch_scripts.update import update
+from arch_scripts.config import config
     
 parser = argparse.ArgumentParser(
     prog="arch-scripts",
@@ -12,7 +18,7 @@ parser.add_argument(
     '--version',
     '-v',
     action="version",
-    version="Preview, version v0.1.0, Production build."
+    version="Preview, version v0.2.0, Production build."
 )
 
 sub = parser.add_subparsers(dest='command', required=True)

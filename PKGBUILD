@@ -1,6 +1,6 @@
 # Maintainer: Andrew <itspixelatd@proton.me>
 pkgname=arch-scripts
-pkgver=0.1.0
+pkgver=0.2.0
 pkgrel=1
 pkgdesc="A useful CLI tool to do stuff in Arch Linux."
 arch=('any')
@@ -8,8 +8,12 @@ url="https://github.com/username/arch-scripts"
 license=('GPL3')
 depends=('python' 'systemd' 'pacman')
 optdepends=('yay: for AUR updates' 'paru: for AUR updates')
-source=("arch-scripts-$pkgver.tar.gz")
-sha256sums=('SKIP')
+source=('main.py'
+        'config.py'
+        'update.py')
+sha256sums=('SKIP'
+            'SKIP'
+            'SKIP')
 
 build() {
     # No build step required for Python-only project
