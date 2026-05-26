@@ -13,7 +13,15 @@ sha256sums=('SKIP')
 
 package() {
     cd "$srcdir/$pkgname-$pkgver"
-    install -Dm755 main.py "$pkgdir/usr/bin/arch-scripts"
-    install -Dm644 config.py "$pkgdir/usr/lib/python3/dist-packages/arch_scripts/config.py"
-    install -Dm644 update.py "$pkgdir/usr/lib/python3/dist-packages/arch_scripts/update.py"
+    install -Dm755 main.py "$pkgdir/usr/lib/arch-scripts/main.py"
+    install -Dm644 config.py "$pkgdir/usr/lib/arch-scripts/config.py"
+    install -Dm644 update.py "$pkgdir/usr/lib/arch-scripts/update.py"
+
+    # Create a launcher script
+    mkdir -p "$pkgdir/usr/bin"
+    cat > "$pkgdir/usr/bin/arch-scripts" << 'EOF'
+#!/bin/bash
+exec python /usr/lib/arch-scripts/main.py "$@"
+EOF
+    chmod 755 "$pkgdir/usr/bin/arch-scripts"
 }
