@@ -6,8 +6,8 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), '..
 
 import subprocess
 import argparse
-from arch_scripts.update import update
-from arch_scripts.config import config
+from update import update
+from config import config
     
 parser = argparse.ArgumentParser(
     prog="arch-scripts",
