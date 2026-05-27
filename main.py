@@ -7,7 +7,8 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), '..
 import subprocess
 import argparse
 from update import *
-from config import config
+from config import *
+from install import *
     
 parser = argparse.ArgumentParser(
     prog="arch-scripts",
@@ -18,7 +19,7 @@ parser.add_argument(
     '--version',
     '-v',
     action="version",
-    version="Preview, version v0.5.0, Production build."
+    version="Preview, version v0.6.0, Production build."
 )
 
 sub = parser.add_subparsers(dest='command', required=True)
@@ -41,6 +42,13 @@ config_parser.add_argument(
 
 # -- Update --
 sub.add_parser('update', help="Updates system using script.")
+
+# -- Install --
+install_parser = sub.add_parser('install', help="Installs various pack of packages.")
+install_parser.add_argument(
+    '--development'
+    help="Installs basic development packages, such as cmake, git, and more."
+)
     
 def main():
     args = parser.parse_args()
@@ -50,6 +58,8 @@ def main():
         update()
     elif args.command == 'config':
         config(args)
+    elif args.command == 'install':
+        install(args)
 
 
 if __name__ == "__main__":

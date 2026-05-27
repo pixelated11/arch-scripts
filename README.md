@@ -1,5 +1,8 @@
 # Arch Linux scripts
-Configure, update, and install things on archlinux easily.
+A simple CLI tool, to configure, update, and install things on arch easily.
+> [!NOTE]
+> Software is **not** ready for production use. It is on pre-release stage.
+> If you do encounter bugs, please, let me know in the issues section.
 
 ## Usage
 
@@ -15,10 +18,8 @@ Configure, update, and install things on archlinux easily.
 Note that the --help, or -h argument can be used in subcommands too.
 ## Available configurations to be edited
 - DNS, using systemd-resolved
-- Bluetooth
-- More to be added
+- Hostname
+- Shell
 
 ## Contributions
 Contributions are welcome. Refer to the code of conduct before contributing. E-mail itspixelatd@proton.me to as for contribution permission.
-
-# Software is under development and not ready for production used
