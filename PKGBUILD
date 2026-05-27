@@ -1,6 +1,6 @@
 # Maintainer: Andrew <itspixelatd@proton.me>
 pkgname=arch-scripts
-pkgver=0.6.1
+pkgver=0.6.2
 pkgrel=1
 pkgdesc="A useful CLI tool to do stuff in Arch Linux."
 arch=('any')
