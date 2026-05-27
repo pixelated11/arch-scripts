@@ -49,6 +49,10 @@ install_parser.add_argument(
     '--development',
     help="Installs basic development packages, such as cmake, git, and more."
 )
+install_parser.add_argument(
+    '--qemu-full',
+    help="Installs a full QEMU KVM package."
+)
     
 def main():
     args = parser.parse_args()
