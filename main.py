@@ -19,7 +19,7 @@ parser.add_argument(
     '--version',
     '-v',
     action="version",
-    version="Preview, version v0.6.0, Production build."
+    version="Preview, version v0.6.1, Production build."
 )
 
 sub = parser.add_subparsers(dest='command', required=True)
@@ -46,7 +46,7 @@ sub.add_parser('update', help="Updates system using script.")
 # -- Install --
 install_parser = sub.add_parser('install', help="Installs various pack of packages.")
 install_parser.add_argument(
-    '--development'
+    '--development',
     help="Installs basic development packages, such as cmake, git, and more."
 )
     
