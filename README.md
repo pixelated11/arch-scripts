@@ -21,5 +21,22 @@ Note that the --help, or -h argument can be used in subcommands too.
 - Hostname
 - Shell
 
+## Installation
+Install the package from the AUR using an AUR helper:
+```
+yay -S arch-scripts
+```
+Your AUR helper may be other than yay.
+***
+Or, build the package manually:
+```
+git clone https://github.com/pixelated11/arch-scripts.git && cd arch-scripts
+```
+Then, run makepkg:
+```
+makepkg -si
+```
+Arch-scripts should be installed.
+
 ## Contributions
 Contributions are welcome. Refer to the code of conduct before contributing. E-mail itspixelatd@proton.me to as for contribution permission.
