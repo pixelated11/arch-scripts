@@ -1,5 +1,6 @@
 import sys
 import subprocess
+import os
 # goo goo ga ga
 def install(args):
     if args.development:
@@ -73,7 +74,9 @@ def configure_libvirtd():
     # This code will always execute, regardless of whether the above succeeded or failed
     print("Usermodding libvirtd...")
     try:
-        subprocess.run(["sudo", "usermod", "-aG", "libvirt", "$USER"], check=True)
+        # Get the actual username instead of using $USER which won't expand in subprocess
+        username = os.getenv('USER') or os.getenv('USERNAME') or 'unknown'
+        subprocess.run(["sudo", "usermod", "-aG", "libvirt", username], check=True)
         print("Usermod successful! Configuring done.")
     except subprocess.CalledProcessError as e:
         print(f"Error: Usermodding failed: {e}")
