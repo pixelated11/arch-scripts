@@ -1,19 +1,20 @@
 import sys
 import subprocess
-
+# goo goo ga ga
 def install(args):
     if args.development:
         install_development()
     elif args.qemu_full:
         install_qemu()
-
+    else:
+        print("Install requires at least one parameter.")
 
 def install_development():
     dev_packages = [
         'base-devel',
         'git',
         'github-cli',
-        'openjdk',
+        'jdk-openjdk',
         'gcc',
         'libgcc'
     ]

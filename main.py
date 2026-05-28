@@ -1,14 +1,13 @@
 #!/usr/bin/env python3
 import sys
 import os
-# Add the arch_scripts module to the path
-sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', 'lib/python3/site-packages'))
-
 import subprocess
 import argparse
 from update import *
 from config import *
 from install import *
+# Add the arch_scripts module to the path
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', 'lib/python3/site-packages'))
     
 parser = argparse.ArgumentParser(
     prog="arch-scripts",
@@ -19,7 +18,7 @@ parser.add_argument(
     '--version',
     '-v',
     action="version",
-    version="Preview, version v0.6.2, Production build."
+    version="Preview, version v0.6.3, Production build."
 )
 
 sub = parser.add_subparsers(dest='command', required=True)
@@ -48,10 +47,12 @@ install_parser = sub.add_parser('install', help="Installs various pack of packag
 install_parser.add_argument(
     '--development',
     help="Installs basic development packages, such as cmake, git, and more."
+    action='store_true'
 )
 install_parser.add_argument(
     '--qemu-full',
     help="Installs a full QEMU KVM package."
+    action='store_true'
 )
     
 def main():

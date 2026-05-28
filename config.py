@@ -10,7 +10,7 @@ def config(args):
     elif args.change_shell:
         change_shell()
     else:
-        print("No configuration options specified. Refer to the help message if you are confused.")
+        print("Config requires at least one parameter.")
 
 def configure_dns(provider):
     """Configure DNS in systemd-resolved's resolved.conf"""
