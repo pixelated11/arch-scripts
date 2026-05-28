@@ -1,7 +1,7 @@
 # Maintainer: Andrew <itspixelatd@proton.me>
 pkgname=arch-scripts
 pkgver=0.6.3
-pkgrel=1
+pkgrel=2
 pkgdesc="A useful CLI tool to do stuff in Arch Linux."
 arch=('any')
 url="https://github.com/pixelated11/arch-scripts"

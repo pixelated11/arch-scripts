@@ -46,12 +46,12 @@ sub.add_parser('update', help="Updates system using script.")
 install_parser = sub.add_parser('install', help="Installs various pack of packages.")
 install_parser.add_argument(
     '--development',
-    help="Installs basic development packages, such as cmake, git, and more."
+    help="Installs basic development packages, such as cmake, git, and more.",
     action='store_true'
 )
 install_parser.add_argument(
     '--qemu-full',
-    help="Installs a full QEMU KVM package."
+    help="Installs a full QEMU KVM package.",
     action='store_true'
 )
     
