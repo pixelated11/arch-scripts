@@ -58,7 +58,7 @@ def configure_libvirtd():
     
     # Try to enable libvirtd service, but continue even if it fails
     try:
-        subprocess.run(["sudo", "systemctl", "enable", "--now", "libvirtd"], check=True)
+        subprocess.run(["sudo", "systemctl", "enable", "--now", "libvirt"], check=True)
         print("Enabling service successful!")
     except subprocess.CalledProcessError as e:
         print(f"Warning: Enabling service encountered an error: {e}")
