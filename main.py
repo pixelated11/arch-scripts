@@ -18,7 +18,7 @@ parser.add_argument(
     '--version',
     '-v',
     action="version",
-    version="Preview, version v0.6.7, Production build."
+    version="Preview, version v0.6.8, Production build."
 )
 
 sub = parser.add_subparsers(dest='command', required=True)

@@ -58,7 +58,7 @@ def configure_libvirtd():
     
     # Try to enable libvirtd service, but continue even if it fails
     try:
-        subprocess.run(["sudo", "systemctl", "enable", "--now", "libvirt"], check=True)
+        subprocess.run(["sudo", "systemctl", "enable", "--now", "libvirtd"], check=True)
         print("Enabling service successful!")
     except subprocess.CalledProcessError as e:
         print(f"Warning: Enabling service encountered an error: {e}")
@@ -73,7 +73,7 @@ def configure_libvirtd():
     # This code will always execute, regardless of whether the above succeeded or failed
     print("Usermodding libvirtd...")
     try:
-        subprocess.run(["sudo", "usermod", "-aG", "libvirtd", "$USER"], check=True)
+        subprocess.run(["sudo", "usermod", "-aG", "libvirt", "$USER"], check=True)
         print("Usermod successful! Configuring done.")
     except subprocess.CalledProcessError as e:
         print(f"Error: Usermodding failed: {e}")
