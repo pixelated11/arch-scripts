@@ -1,41 +1,41 @@
-.TH ARCH-SCRIPTS 1 "2026-05-28" "v0.6.9" "Arch Scripts Manual"
+.TH ARCH-SCRIPTS 1 "May 29, 2026" "v1.0.0" "Arch-Scripts Manual"
 .SH NAME
-arch-scripts \- a simple CLI tool to update, configure, install, and do more stuff on Arch Linux
+arch-scripts \- a simple cli tool, to update, configure, and install things on arch linux easily.
 .SH SYNOPSIS
-\fBarch-scripts\fR \fB\-v\fR|\fB\-\-version\fR
-.br
-\fBarch-scripts\fR \fB\-h\fR|\fB\-\-help\fR
-.SH DESCRIPTION
-\fBarch-scripts\fR is a simple CLI tool, built for arch. It is to easily configure, install, update, and do more stuff on arch linux.
+.B arch-scripts
+.I COMMAND
+\fR[\fIoptions\fR]
+.SH COMMANDS (SUB-COMMANDS)
+.TP
+.B install
+Installs packages in packs, for your needs
+.TP
+.B config
+Configures settings on arch linux.
+.TP
+.B update
+Updates AUR, and pacman packages.
+.SH CONFIG OPTIONS
+.TP
+.B --change-shell
+Changes shell for the current user
+.TP
+.B --change-hostname
+Changes the system hostname
+.TP
+.BI --dns " {quad9, cloudflare, google, adguard}"
+Changes the systemd-resolved DNS to the one of the ones above
+.TP
+.B --mirror-rank
+Ranks your pacman mirrors from /etc/pacman.d/mirrorlist
+.TP
+.B --swapiness
+Changes your memory swapiness
+.TP
+.B --journal-limit
+Limits your systemd journald logs to 200MB max
 .PP
-It is mainly made in python, so python is necessary to run this software.
-.SH OPTIONS
-.TP
-\fB\-\-help\fR, \fB\-h\fR
-Shows the help message and exits
-.TP
-\fB\-\-version\fR, \fB\-v\fR
-Shows the current software version
-.SH SUBCOMMANDS
-.TP
-\fBinstall\fR
-Installs a pack of packages.
-.TP
-\fBupdate\fR
-Updates the system using pacman, and your AUR helper.
-.TP
-\fBconfig\fR
-Configures arch linux. Arguments:
-.RS
-.TP
-\fB\-\-dns\fR {\fBquad9\fR, \fBcloudflare\fR, \fBadguard\fR, \fBgoogle\fR}
-Changes the DNS on systemd-resolved.
-.TP
-\fB\-\-change\-hostname\fR
-Changes the system hostname.
-.TP
-\fB\-\-change\-shell\fR
-Changes the default shell for the current user.
-.RE
-.SH AUTHORS
-Written by Andrew P. <itspixelatd@proton.me>
+For install options, run
+.B arch-scripts install -h, --help
+.SH AUTHOR
+Andrew P. <itspixelatd@proton.me>

@@ -18,7 +18,7 @@ parser.add_argument(
     '--version',
     '-v',
     action="version",
-    version="Preview, version v0.6.9, Production build."
+    version="Release v1.0.0, Production build."
 )
 
 sub = parser.add_subparsers(dest='command', required=True)
@@ -38,6 +38,21 @@ config_parser.add_argument(
     action='store_true',
     help="Changes the default shell for the current user."
 )
+config_parser.add_argument(
+    '--mirror-rank',
+    action='store_true',
+    help="Ranks your mirror in /etc/pacman.d/mirrorlist"
+)
+config_parser.add_argument(
+    '--journal-limit',
+    action='store_true',
+    help="Restricts systemd journald growth, limiting to 200MB"
+)
+config_parser.add_argument(
+    '--swapiness',
+    action='store_true'
+    help="Adjusts virtual memory behaviour by swapiness."
+)
 
 # -- Update --
 sub.add_parser('update', help="Updates system using script.")
@@ -53,6 +68,16 @@ install_parser.add_argument(
     '--qemu-full',
     help="Installs a full QEMU KVM package.",
     action='store_true'
+)
+install_parser.add_argument(
+    '--sandbox',
+    action='store_true',
+    help="Installs packages needed for sandbox use. Such as docker."
+)
+install_parser.add_argument(
+    '--gaming',
+    action='store_true'
+    help="Installs gaming packages. Such as vulkan, mesa, and steam."
 )
     
 def main():
