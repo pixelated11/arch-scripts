@@ -9,6 +9,12 @@ def config(args):
         change_hostname()
     elif args.change_shell:
         change_shell()
+    elif args.mirror_rank:
+        rank_mirrors()
+    elif args.journal_limit:
+        limit_journal_logs()
+    elif args.swapiness:
+        change_swappiness()
     else:
         print("Config requires at least one parameter.")
 
@@ -116,3 +122,60 @@ def change_shell():
     except Exception as e:
         print(f"An error occurred: {e}")
         sys.exit(1)
+
+def limit_journal_logs():
+    config_dir = "/etc/systemd/journald.conf.d"
+    config_file = f"{config_dir}/99-limit-size.conf"
+    
+    print("Limiting systemd journal logs capacity to 200MB...")
+    try:
+        # Create directory path if missing
+        subprocess.run(["sudo", "mkdir", "-p", config_dir], check=True)
+        
+        # Drop configuration values directly into file destination using sudo tee
+        config_content = "[Journal]\nSystemMaxUse=200M\n"
+        proc = subprocess.Popen(["sudo", "tee", config_file], stdin=subprocess.PIPE, stdout=subprocess.DEVNULL, text=True)
+        proc.communicate(input=config_content)
+        
+        # Restart the daemon service to reload rules
+        subprocess.run(["sudo", "systemctl", "restart", "systemd-journald"], check=True)
+        print("Journal size cap applied and service restarted successfully.")
+    except Exception as e:
+        print(f"Failed to configure journal limit: {e}")
+
+def change_swappiness():
+    val = input("Enter preferred swappiness value (0-100, recommended for desktop: 10): ").strip()
+    if not val.isdigit() or not (0 <= int(val) <= 100):
+        print("Invalid entry. Please enter a number between 0 and 100.")
+        return
+
+    config_file = "/etc/sysctl.d/99-swappiness.conf"
+    print(f"Setting persistent swappiness index value to {val}...")
+    try:
+        # Write configuration rule persistently
+        proc = subprocess.Popen(["sudo", "tee", config_file], stdin=subprocess.PIPE, stdout=subprocess.DEVNULL, text=True)
+        proc.communicate(input=f"vm.swappiness={val}\n")
+        
+        # Apply runtime configurations immediately
+        subprocess.run(["sudo", "sysctl", "--system"], check=True)
+        print("Swappiness value configured and reloaded successfully!")
+    except Exception as e:
+        print(f"An error occurred writing configuration: {e}")
+
+def rank_mirrors():
+    print("Ranking pacman mirrors for speed (this might take a minute)...")
+    try:
+        # Check and install reflector if missing
+        subprocess.run(["sudo", "pacman", "-S", "--needed", "--noconfirm", "reflector"], check=True)
+        
+        # Run reflector to pull the latest 10 HTTPS mirrors sorted by download speed
+        subprocess.run([
+            "sudo", "reflector", 
+            "--latest", "10", 
+            "--protocol", "https", 
+            "--sort", "rate", 
+            "--save", "/etc/pacman.d/mirrorlist"
+        ], check=True)
+        print("Mirror list optimized successfully!")
+    except subprocess.CalledProcessError as e:
+        print(f"Failed to optimize mirror list: {e}")
