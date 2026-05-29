@@ -18,7 +18,7 @@ parser.add_argument(
     '--version',
     '-v',
     action="version",
-    version="Release v1.0.0, Production build."
+    version="Release v1.1.0, Production build."
 )
 
 sub = parser.add_subparsers(dest='command', required=True)
@@ -50,7 +50,7 @@ config_parser.add_argument(
 )
 config_parser.add_argument(
     '--swapiness',
-    action='store_true'
+    action='store_true',
     help="Adjusts virtual memory behaviour by swapiness."
 )
 
@@ -76,7 +76,7 @@ install_parser.add_argument(
 )
 install_parser.add_argument(
     '--gaming',
-    action='store_true'
+    action='store_true',
     help="Installs gaming packages. Such as vulkan, mesa, and steam."
 )
     
