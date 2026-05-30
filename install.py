@@ -103,7 +103,7 @@ def install_sandbox():
         
         # Enable and start the docker socket daemon safely
         print("Enabling and starting Docker daemon...")
-        subprocess.run(["sudo", "systemctl", "enable", "--now", "docker.service"], check=True)
+        subprocess.run(["sudo", "systemctl", "enable", "--now", "docker"], check=True)
         
         # Add user to docker group so they don't have to use sudo for every container command
         username = os.getenv('SUDO_USER') or os.getenv('USER')
@@ -148,9 +148,9 @@ def detect_gpu_vendor():
 def install_gaming():
     # Base packages shared across all GPUs
     gaming_packages = [
-        'gamemode', 'lib32-gamemode',
-        'mangohud', 'lib32-mangohud',
-        'wine-staging', 'giflib', 'lib32-giflib', 'steam'
+        'gamemode',
+        'mangohud',
+        'wine-staging', 'giflib', 'steam'
     ]
     
     gpu = detect_gpu_vendor()
@@ -169,9 +169,35 @@ def install_gaming():
         print("Warning: Could not reliably detect GPU hardware. Skipping explicit Vulkan drivers.")
         print("You may need to install the appropriate vulkan driver manually.")
 
+    # Ask user if they want to enable multilib repository
+    enable_multilib = input("Do you want to enable the multilib repository? (y/n): ").strip().lower()
+    
+    if enable_multilib in ['y', 'yes']:
+        print("Enabling multilib on pacman... You need to reboot system after.")
+        multilib_enable = """
+[multilib]
+Include = /etc/pacman.d/mirrorlist
+"""
+        try:
+            with open('/etc/pacman.conf', 'a') as file:
+                file.write(multilib_enable)
+                print("Enabling multilib support success!")
+        except subprocess.CalledProcessError as e:
+            print(f"Process returned an error: {e}")
+            sys.exit(1)
+        except PermissionError:
+            print("Please run with sudo.")
+            sys.exit(1)
+        except Exception as e:
+            print(f"Error enabling multilib: {e}")
+            sys.exit(1)
+    elif enable_multilib in ['n', 'no']:
+        print("Skipping multilib repository setup.")
+    else:
+        print("Invalid input. Skipping multilib repository setup.")
     print("Installing Gaming Optimization packages...")
     try:
-        # Inform user to ensure [multilib] repository is active
+        # Inform user to ensure [multilib] repository is active if they chose to enable it
         subprocess.run(["sudo", "pacman", "-S", "--needed"] + gaming_packages, check=True)
         print("Gaming packages installed successfully!")
         print("\nTo use these utilities:")
@@ -179,5 +205,6 @@ def install_gaming():
         
     except subprocess.CalledProcessError as e:
         print(f"Failed to install gaming packages: {e}")
-        print("Tip: Ensure the [multilib] repository is enabled in /etc/pacman.conf")
+        if enable_multilib in ['y', 'yes']:
+            print("Tip: Ensure the [multilib] repository is enabled in /etc/pacman.conf")
         sys.exit(1)
