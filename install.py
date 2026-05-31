@@ -22,8 +22,7 @@ def install_development():
         'git',
         'github-cli',
         'jdk-openjdk',
-        'gcc',
-        'libgcc'
+        'gcc'
     ]
     print("Installing development packages...")
     try:
@@ -37,7 +36,7 @@ def install_development():
         print("Permission denied. Please run with sudo.")
         sys.exit(1)
     except Exception as e:
-        print(f"An error occured: {e}")
+        print(f"An error occurred: {e}")
         sys.exit(1)
 
 def install_qemu():
@@ -57,7 +56,7 @@ def install_qemu():
         print("Permission denied. Please run with sudo.")
         sys.exit(1)
     except Exception as e:
-        print(f"An error occured: {e}")
+        print(f"An error occurred: {e}")
         sys.exit(1)
 
 def configure_libvirtd():
@@ -81,7 +80,7 @@ def configure_libvirtd():
     print("Usermodding libvirtd...")
     try:
         # Get the actual username instead of using $USER which won't expand in subprocess
-        username = os.getenv('USER') or os.getenv('USERNAME') or 'unknown'
+        username = os.getenv('SUDO_USER') or os.getenv('USER') or os.getenv('USERNAME') or 'unknown'
         subprocess.run(["sudo", "usermod", "-aG", "libvirt", username], check=True)
         print("Usermod successful! Configuring done.")
     except subprocess.CalledProcessError as e:
