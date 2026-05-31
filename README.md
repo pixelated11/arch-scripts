@@ -1,8 +1,5 @@
 # Arch Linux scripts
 A simple CLI tool, to configure, update, and install things on arch easily.
-> [!NOTE]
-> Software is **not** ready for production use. It is on pre-release stage.
-> If you do encounter bugs, please, let me know in the issues section.
 
 ## Usage
 
