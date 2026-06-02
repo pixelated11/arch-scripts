@@ -16,7 +16,7 @@ def config(args):
         limit_journal_logs()
     elif args.swapiness:
         change_swappiness()
-    elif args.change_timezone:
+    elif args.timezone:
         change_timezone()
     else:
         print("Config requires at least one parameter.")
