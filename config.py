@@ -1,5 +1,6 @@
 import sys
 import subprocess
+import os
 
 def config(args):
     """Main config function"""
@@ -15,6 +16,8 @@ def config(args):
         limit_journal_logs()
     elif args.swapiness:
         change_swappiness()
+    elif args.change_timezone:
+        change_timezone()
     else:
         print("Config requires at least one parameter.")
 
@@ -179,3 +182,55 @@ def rank_mirrors():
         print("Mirror list optimized successfully!")
     except subprocess.CalledProcessError as e:
         print(f"Failed to optimize mirror list: {e}")
+
+def change_timezone():
+    print("Available regions:")
+    regions = os.listdir('/usr/share/zoneinfo')
+    # Filter out files that aren't regions (like localtime, posix, right, etc.)
+    regions = [r for r in regions if os.path.isdir(f'/usr/share/zoneinfo/{r}')]
+    for region in sorted(regions):
+        print(f"  {region}")
+    
+    region = input("\nEnter your region from the list above: ")
+    
+    # Validate region
+    if not region or not os.path.isdir(f'/usr/share/zoneinfo/{region}'):
+        print("Invalid region selected.")
+        return False
+    
+    print(f"\nAvailable cities/areas in {region}:")
+    areas = os.listdir(f'/usr/share/zoneinfo/{region}')
+    for area in sorted(areas):
+        print(f"  {area}")
+    
+    city = input("\nEnter your city/area from the list above: ")
+    
+    # Validate city/area
+    if not city or not os.path.exists(f'/usr/share/zoneinfo/{region}/{city}'):
+        print("Invalid city/area selected.")
+        return False
+    
+    try:
+        # Remove the existing localtime symlink
+        if os.path.exists('/etc/localtime'):
+            subprocess.run(['sudo', 'rm', '/etc/localtime'], check=True)
+        
+        # Create new symlink
+        subprocess.run(['sudo', 'ln', '-s', f'/usr/share/zoneinfo/{region}/{city}', '/etc/localtime'], check=True)
+        
+        # Update /etc/timezone file
+        with open('/etc/timezone', 'w') as f:
+            f.write(f'{region}/{city}\n')
+        
+        print(f"Timezone successfully changed to {region}/{city}!")
+        return True
+        
+    except subprocess.CalledProcessError as e:
+        print(f"Failed to change timezone: {e}")
+        return False
+    except PermissionError:
+        print("Permission denied. Please run with sudo.")
+        return False
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return False

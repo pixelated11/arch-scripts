@@ -13,6 +13,8 @@ def install(args):
         install_sandbox()
     elif args.gaming:
         install_gaming()
+    elif args.aur_helper:
+        install_helper()
     else:
         print("Install requires at least one parameter.")
 
@@ -145,6 +147,11 @@ def detect_gpu_vendor():
     return 'unknown'
 
 def install_gaming():
+    # Check if running with sudo privileges
+    if os.geteuid() != 0:
+        print("Error: This script must be run with sudo privileges for gaming package installation.")
+        sys.exit(1)
+    
     # Base packages shared across all GPUs
     gaming_packages = [
         'gamemode',
@@ -168,32 +175,60 @@ def install_gaming():
         print("Warning: Could not reliably detect GPU hardware. Skipping explicit Vulkan drivers.")
         print("You may need to install the appropriate vulkan driver manually.")
 
-    # Ask user if they want to enable multilib repository
-    enable_multilib = input("Do you want to enable the multilib repository? (y/n): ").strip().lower()
-    
-    if enable_multilib in ['y', 'yes']:
-        print("Enabling multilib on pacman... You need to reboot system after.")
-        multilib_enable = """
+    # Check if multilib is already enabled
+    multilib_enabled = False
+    enable_multilib = 'n'  # Initialize the variable
+    try:
+        with open('/etc/pacman.conf', 'r') as file:
+            lines = file.readlines()
+            for i, line in enumerate(lines):
+                # Check for uncommented multilib entry
+                if line.strip() == '[multilib]' and not line.lstrip().startswith('#'):
+                    # Also check that it's not commented out in the following lines
+                    for j in range(i+1, min(i+10, len(lines))):  # Check next 10 lines
+                        if 'Include = /etc/pacman.d/mirrorlist' in lines[j] and not lines[j].lstrip().startswith('#'):
+                            multilib_enabled = True
+                            print("Multilib repository is already enabled.")
+                            break
+                    if multilib_enabled:
+                        break
+    except FileNotFoundError:
+        print("Warning: /etc/pacman.conf not found.")
+    except Exception as e:
+        print(f"Warning: Could not read /etc/pacman.conf: {e}")
+
+    # Ask user if they want to enable multilib repository (only if not already enabled)
+    if not multilib_enabled:
+        enable_multilib = input("Do you want to enable the multilib repository? (y/n): ").strip().lower()
+        
+        if enable_multilib in ['y', 'yes']:
+            print("Enabling multilib on pacman... You need to reboot system after.")
+            multilib_enable = """
 [multilib]
 Include = /etc/pacman.d/mirrorlist
 """
-        try:
-            with open('/etc/pacman.conf', 'a') as file:
-                file.write(multilib_enable)
-                print("Enabling multilib support success!")
-        except subprocess.CalledProcessError as e:
-            print(f"Process returned an error: {e}")
-            sys.exit(1)
-        except PermissionError:
-            print("Please run with sudo.")
-            sys.exit(1)
-        except Exception as e:
-            print(f"Error enabling multilib: {e}")
-            sys.exit(1)
-    elif enable_multilib in ['n', 'no']:
-        print("Skipping multilib repository setup.")
+            try:
+                with open('/etc/pacman.conf', 'a') as file:
+                    file.write(multilib_enable)
+                    print("Enabling multilib support success!")
+                # Update package databases after enabling multilib
+                print("Updating package databases...")
+                subprocess.run(["sudo", "pacman", "-Sy"], check=True)
+            except subprocess.CalledProcessError as e:
+                print(f"Process returned an error: {e}")
+                sys.exit(1)
+            except PermissionError:
+                print("Please run with sudo.")
+                sys.exit(1)
+            except Exception as e:
+                print(f"Error enabling multilib: {e}")
+                sys.exit(1)
+        elif enable_multilib in ['n', 'no']:
+            print("Skipping multilib repository setup.")
+        else:
+            print("Invalid input. Skipping multilib repository setup.")
     else:
-        print("Invalid input. Skipping multilib repository setup.")
+        print("Proceeding with package installation.")
     print("Installing Gaming Optimization packages...")
     try:
         # Inform user to ensure [multilib] repository is active if they chose to enable it
@@ -207,3 +242,26 @@ Include = /etc/pacman.d/mirrorlist
         if enable_multilib in ['y', 'yes']:
             print("Tip: Ensure the [multilib] repository is enabled in /etc/pacman.conf")
         sys.exit(1)
+
+def install_helper():
+    print("Installing an AUR helper...")
+    aur_helper = input("What AUR helper do you want to install? (paru/yay): ").strip().lower()
+    if aur_helper == 'paru':
+        print("Installing paru...")
+        print("Installing dependency: git...")
+        subprocess.run(["sudo", "pacman", "-S", "--needed", "git"], check=True)
+        print("Cloning and making package...")
+        subprocess.run(["git", "clone", "https://aur.archlinux.org/paru.git"], check=True)
+        os.chdir("paru/")
+        print("Running makepkg...")
+        subprocess.run(["makepkg", "-si"], check=True)
+    elif aur_helper == 'yay':
+        print("Installing yay...")
+        subprocess.run(["sudo", "pacman", "-S", "--needed", "git"], check=True)
+        subprocess.run(["git", "clone", "https://aur.archlinux.org/yay.git"], check=True)
+        os.chdir("yay/")
+        print("Running makepkg...")
+        subprocess.run(["makepkg", "-si"], check=True)
+    else:
+        print("Invalid selection. Please choose paru or yay.")
+        return

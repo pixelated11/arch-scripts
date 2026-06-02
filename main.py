@@ -18,7 +18,7 @@ parser.add_argument(
     '--version',
     '-v',
     action="version",
-    version="Release v1.2.1, Production build."
+    version="Release v1.3.0, Production build."
 )
 
 sub = parser.add_subparsers(dest='command', required=True)
@@ -53,6 +53,12 @@ config_parser.add_argument(
     action='store_true',
     help="Adjusts virtual memory behaviour by swapiness."
 )
+config_parser.add_argument(
+    '--timezone',
+    action='store_true',
+    help="Changes the timezone for you."
+
+)
 
 # -- Update --
 sub.add_parser('update', help="Updates system using script.")
@@ -79,10 +85,20 @@ install_parser.add_argument(
     action='store_true',
     help="Installs gaming packages. Such as vulkan, mesa, and steam."
 )
+install_parser.add_argument(
+    '--aur-helper',
+    action='store_true',
+    help="Installs an AUR helper. (selectable)"
+)
     
 def main():
     args = parser.parse_args()
     # Make sure to parse args first
+
+    # Check if sudo is required for install commands
+    if args.command == 'install' and os.geteuid() != 0:
+        print("Error: Install commands must be run with sudo privileges.")
+        sys.exit(1)
 
     if args.command == 'update':
         update()
