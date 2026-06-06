@@ -1,6 +1,6 @@
 # Maintainer: Andrew <itspixelatd@proton.me>
 pkgname=arch-scripts
-pkgver=1.4.1
+pkgver=1.4.3
 pkgrel=1
 pkgdesc="Multipurpose CLI tool, to install, update, and configure arch easily."
 arch=('any')
