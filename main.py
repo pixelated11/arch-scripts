@@ -18,7 +18,7 @@ parser.add_argument(
     '--version',
     '-v',
     action="version",
-    version="Release v1.3.1, Production build."
+    version="Release v1.4.0, Production build."
 )
 
 sub = parser.add_subparsers(dest='command', required=True)
@@ -57,7 +57,11 @@ config_parser.add_argument(
     '--timezone',
     action='store_true',
     help="Changes the timezone for you."
-
+)
+config_parser.add_argument(
+    '--locale'
+    action='store_true'
+    help="Changes the system locale."
 )
 
 # -- Update --

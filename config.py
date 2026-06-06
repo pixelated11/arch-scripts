@@ -18,6 +18,8 @@ def config(args):
         change_swappiness()
     elif args.timezone:
         change_timezone()
+    elif args.change_locale:
+        change_locale()
     else:
         print("Config requires at least one parameter.")
 
@@ -227,6 +229,82 @@ def change_timezone():
         
     except subprocess.CalledProcessError as e:
         print(f"Failed to change timezone: {e}")
+        return False
+    except PermissionError:
+        print("Permission denied. Please run with sudo.")
+        return False
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return False
+
+def change_locale():
+    print("Changing system locale in /etc/locale.conf")
+    
+    # List available locales
+    try:
+        with open('/etc/locale.gen', 'r') as f:
+            lines = f.readlines()
+        
+        print("\nSome available locales (from /etc/locale.gen):")
+        available_locales = []
+        count = 0
+        for line in lines:
+            if line.startswith('#') and 'UTF-8' in line and not line.startswith('##'):
+                locale = line.strip('# ').split()[0]
+                if locale:
+                    available_locales.append(locale)
+                    if count < 10:  # Show first 10 examples
+                        print(f"  {locale}")
+                        count += 1
+        if len(available_locales) > 10:
+            print("  ... (and more)")
+    except Exception as e:
+        print(f"Warning: Could not read locale list: {e}")
+    
+    locale = input("\nEnter your new locale (e.g. en_US, id_ID): ")
+    
+    if not locale or len(locale) == 0:
+        print("Locale cannot be empty.")
+        return False
+    
+    try:
+        # Generate the locale first if it exists in locale.gen
+        locale_entry = f"{locale}.UTF-8 UTF-8"
+        locale_found = False
+        
+        # Read the current locale.gen file
+        with open('/etc/locale.gen', 'r') as f:
+            lines = f.readlines()
+        
+        # Check if locale is already uncommented or comment it out to enable
+        with open('/etc/locale.gen', 'w') as f:
+            for line in lines:
+                if line.strip() == f"#{locale_entry}" or line.strip() == locale_entry:
+                    f.write(f"{locale_entry}\n")
+                    locale_found = True
+                else:
+                    f.write(line)
+        
+        if not locale_found:
+            print(f"Warning: Locale {locale}.UTF-8 not found in /etc/locale.gen. Adding it.")
+            with open('/etc/locale.gen', 'a') as f:
+                f.write(f"\n{locale_entry}\n")
+        
+        # Generate the locale
+        print(f"Generating locale {locale}.UTF-8...")
+        subprocess.run(["sudo", "locale-gen"], check=True)
+        
+        # Set the system locale
+        new_locale = f"LANG={locale}.UTF-8\n"
+        with open('/etc/locale.conf', 'w') as f:
+            f.write(new_locale)
+        
+        print(f"Locale successfully changed to {locale}.UTF-8!")
+        print("You may need to log out and back in for changes to take effect.")
+        return True
+        
+    except subprocess.CalledProcessError as e:
+        print(f"Failed to generate locale: {e}")
         return False
     except PermissionError:
         print("Permission denied. Please run with sudo.")
