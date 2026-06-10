@@ -17,6 +17,9 @@ Note that the --help, or -h argument can be used in subcommands too.
 - DNS, using systemd-resolved
 - Hostname
 - Shell
+- Timezone
+- Multilib enable/disable
+- And more
 
 ## Installation
 Install the package from the AUR using an AUR helper:
