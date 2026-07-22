@@ -18,7 +18,7 @@ def config(args):
         change_swappiness()
     elif args.timezone:
         change_timezone()
-    elif args.locale:
+    elif args.change_locale:
         change_locale()
     else:
         print("Config requires at least one parameter.")

@@ -264,4 +264,4 @@ def install_helper():
         subprocess.run(["makepkg", "-si"], check=True)
     else:
         print("Invalid selection. Please choose paru or yay.")
-        return
+        return False

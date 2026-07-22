@@ -59,7 +59,7 @@ config_parser.add_argument(
     help="Changes the timezone for you."
 )
 config_parser.add_argument(
-    '--locale',
+    '--change-locale',
     action='store_true',
     help="Changes the system locale."
 )
